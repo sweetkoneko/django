@@ -1,0 +1,88 @@
+{% extends "admin_taller/index.html" %}
+{% load i18n static %}
+
+{% block cssfiles %} {% endblock %}
+
+{% block breadcrumb %}
+   <div class="kt-subheader kt-grid__item" id="kt_subheader">
+      <div class="kt-container kt-container--fluid ">
+         <div class="kt-subheader__main">
+            <div class="kt-subheader__breadcrumbs">
+               <a href="{% url 'admin_taller:inicio' %}" class="kt-subheader__breadcrumbs-link">
+                  <li class="las la-home"></li>
+                  {% trans "INICIO" %}
+               </a>
+               <span class="kt-subheader__breadcrumbs-separator"></span>
+               <a class="kt-subheader__breadcrumbs-link">
+                  {% trans "Perfil" %}
+               </a>
+               {% if object %}
+                  <span class="kt-subheader__breadcrumbs-separator"></span>
+                  <a class="kt-subheader__breadcrumbs-link kt-subheader__breadcrumbs-link--home">{% trans "Actualizar" %}</a>
+               {% else %}
+                  <span class="kt-subheader__breadcrumbs-separator"></span>
+                  <a class="kt-subheader__breadcrumbs-link">{% trans "Crear" %}</a>
+               {% endif %}
+            </div>
+         </div>
+      </div>
+   </div>
+{% endblock %}
+
+{% block contenido %}
+<form enctype="multipart/form-data" action="" method="post" enctype="multipart/form-data">
+   <div class="kt-portlet kt-portlet--mobile">
+      <div class="kt-portlet__head">
+         <div class="kt-portlet__head-label">
+            <h3 class="kt-portlet__head-title">
+               {% trans "Perfil" %}
+            </h3>
+         </div>
+         <div class="kt-portlet__head-toolbar">
+            <button type="submit" class="btn btn-upper btn-sm btn-bold btn-primario">{% trans "Guardar" %}</button>
+         </div>
+      </div>
+      <div class="kt-portlet__body">
+         <div class="row">
+            {% csrf_token %}
+
+            {% if form.errors %}
+               {% for error in form.non_field_errors %}
+                  <div class="alert alert-danger">
+                     <i>{% trans error|escape %}</i>
+                  </div>
+               {% endfor %}
+            {% endif %}
+
+            {% for field in form %}
+               <div class="form-group col-sm-6 col-md-6 col-lg-4 col-xl-4">
+                  <label class="m-0" for="{{field.id_for_label}}">{{field.label_tag}}</label>
+                  {{ field }}
+                  {% if form.errors %}
+                     {% for error in field.errors %}
+                        <span class="msj-warning">
+                           <i class="fas fa-caret-up"></i>
+                           <i class="fas fa-exclamation-triangle"></i>
+                           {% trans error|escape %}
+                        </span>
+                     {% endfor %}
+                  {% endif %}
+               </div>
+            {% endfor %}
+         </div>
+      </div>
+   </div>
+</form>
+{% endblock %}
+
+{% block jsfiles %}
+   <script>
+      $(document).ready(function () {
+         {%if messages %}
+            {%for message in messages %}
+               toastr.success("<b>{{ message }}</b>", "{% trans 'Message' %}");
+            {% endfor %}
+         {% endif %}
+      });
+   </script>
+{% endblock %}

@@ -1,0 +1,189 @@
+{% load i18n static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <base href="../../">
+   <meta charset="utf-8" />
+   <title>{% trans "Iniciar Sesión" %}</title>
+   <meta name="description" content="Inicio de sesión de usuario">
+   <meta name="author" content="AGMA">
+   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+   <link rel="icon" type="image/png" sizes="96x96" href="{% static 'admin_taller/media/favicon.png' %}" />
+
+   <!-- CSS -->
+   <link rel="stylesheet" type="text/css" href="{% static 'admin_taller/css/vendors.bundle.css' %}">
+   <link rel="stylesheet" type="text/css" href="{% static 'admin_taller/css/style.bundle.css' %}">
+   <link rel="stylesheet" type="text/css" href="{% static 'admin_taller/css/brandAside.css' %}">
+   <link rel="stylesheet" type="text/css" href="{% static 'admin_taller/css/padron_admin/estilos_admin.css' %}">
+
+   <!-- WEBFONT -->
+   <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap" rel="stylesheet">
+   <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,800&display=swap" rel="stylesheet">
+
+   <!-- FONT ICON -->
+   <link href="{% static 'admin_taller/css/padron_publico/line_awesome/line-awesome.css' %}" rel="stylesheet" type="text/css" />
+   <link href="{% static 'admin_taller/css/padron_publico/font_awesome/font-awesome.css' %}" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+   <div class="contenedor-login">
+      <div class="info-login">
+         <div class="logo-tabasco-gob-mx regular">
+            <b class="extrabold">mecautab</b><span class="color-rojo-oficial extrabold">.</span>com<span
+               class="color-rojo-oficial extrabold">.</span>mx
+         </div>
+         <div>
+            <h1 class="bold mb-4 mb-sm-0">
+               Iniciar sesión
+            </h1>
+            <h6 class="regular mb-4 d-none d-sm-flex">
+               Bienvenido, ingresa tus datos para iniciar sesión.
+            </h6>
+            <form class="" action="/accounts/login/" method="post" autocomplete="off" id="kt_login_form">
+               {% csrf_token %}
+               {% if messages %}
+                  {% for message in messages %}
+                     <div class="alert alert-warning fade show" role="alert">
+                        <div class="alert-icon"><i class="flaticon-warning"></i></div>
+                        <div class="alert-text">{{ message|safe }}</div>
+                        <div class="alert-close">
+                           <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                              <span aria-hidden="true"><i class="la la-close"></i></span>
+                           </button>
+                        </div>
+                     </div>
+                  {% endfor %}
+               {% endif %}
+               {% if form.errors %}
+                  {% for field in form %}
+                     {% for error in field.errors %}
+                        <div class="alert alert-warning fade show" role="alert">
+                           <div class="alert-icon"><i class="flaticon-warning"></i></div>
+                           <div class="alert-text"><strong> {% trans field.name|title %} </strong> <i>
+                                 {% trans error|escape %}</i></div>
+                           <div class="alert-close">
+                              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                 <span aria-hidden="true"><i class="la la-close"></i></span>
+                              </button>
+                           </div>
+                        </div>
+                     {% endfor %}
+                  {% endfor %}
+                  {% for error in form.non_field_errors %}
+                     <div class="alert alert-warning fade show" role="alert">
+                        <div class="alert-icon"><i class="flaticon-warning"></i></div>
+                        <div class="alert-text">{% trans error|escape %}</div>
+                        <div class="alert-close">
+                           <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                              <span aria-hidden="true"><i class="la la-close"></i></span>
+                           </button>
+                        </div>
+                     </div>
+                  {% endfor %}
+               {% endif %}
+               <div class="form-group">
+                  <input class="form-control" type="text" placeholder="{% trans 'Correo' %}" name="username" autocomplete="off">
+               </div>
+               <div class="form-group">
+                  <input class="form-control" type="password" placeholder="{% trans 'Contraseña' %}" name="password"
+                     autocomplete="off">
+               </div>
+               <div class="kt-login-v2__actions d-flex align-items-center justify-content-between">
+                  <a href="javascript:void(0);" class="link-oscuro">
+                     {% trans "¿Olvidaste tu contraseña?" %}
+                  </a>
+                  <input type="hidden" name="next" value="{{ next }}" />
+                  <button type="submit" class="btn btn-upper btn-bold btn-primario" id="kt_login_submit">
+                     {% trans "Iniciar Sesión" %}
+                  </button>
+               </div>
+            </form>
+         </div>
+         <div class="politicas">
+            <a href="javascript:void(0);" class="link-oscuro mb-2 mb-sm-0">
+               Política de uso de cookies
+            </a>
+            <a href="javascript:void(0);" class="link-oscuro mb-2 mb-sm-0">
+               Política de privacidad
+            </a>
+         </div>
+      </div>
+      <div class="info-padron">
+         
+         <div>
+            <div class="bloque-titulo mb-4">
+               <h1 class="color-blanco bold">
+                  MECAUTAB
+               </h1>
+            </div>
+            <h6 class="color-blanco line-height-20 regular mb-4">
+               Praesent efficitur sagittis iaculis. Curabitur imperdiet euismod ligula sed rutrum. Donec vehicula, elit eu dictum
+               gravida, quam urna semper mauris, ac accumsan elit eros sed urna. Cras neque| lacus, convallis nec pretium molestie,
+               euismod sed erat. Nulla vel vehicula diam. Ut feugiat mauris vel erat sagittis, eu congue felis consectetur.
+            </h6>
+         </div>
+         <div class="legales">
+            <span class="text-left">
+               Mecánica Automotriz de Tabasco
+            </span>
+            <span class="text-right">
+               MECAUTAB © Derechos Reservados
+            </span>
+         </div>
+         <!-- <img class="logo-tabasco-marca-agua" src="{% static 'base/media/padron_publico/logo-tabasco-blanco-xl.png' %}"> -->
+      </div>
+   </div>
+
+   <!-- begin::Global Config(global config for global JS scripts) -->
+
+   <script>
+      var KTAppOptions = {
+         "colors": {
+            "state": {
+               "brand": "#5578eb",
+               "metal": "#c4c5d6",
+               "light": "#ffffff",
+               "accent": "#00c5dc",
+               "primary": "#5867dd",
+               "success": "#34bfa3",
+               "info": "#36a3f7",
+               "warning": "#ffb822",
+               "danger": "#fd3995",
+               "focus": "#9816f4"
+            },
+            "base": {
+               "label": [
+                  "#c5cbe3",
+                  "#a1a8c3",
+                  "#3d4465",
+                  "#3e4466"
+               ],
+               "shape": [
+                  "#f0f3ff",
+                  "#d9dffa",
+                  "#afb4d4",
+                  "#646c9a"
+               ]
+            }
+         }
+      };
+   </script>
+
+   <!-- end::Global Config -->
+
+   <!--begin::Global Theme Bundle(used by all pages) -->
+   <script src="{% static 'admin_taller/js/plugins.bundle.js' %}" type="text/javascript"></script>
+   <script src="{% static 'admin_taller/assets/js/scripts.bundle.js' %}" type="text/javascript"></script>
+
+   <!--end::Global Theme Bundle -->
+
+   <!--begin::Page Scripts(used by this page) -->
+
+   <!--end::Page Scripts -->
+</body>
+
+</html>

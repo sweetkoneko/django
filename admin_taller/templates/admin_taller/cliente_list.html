@@ -1,0 +1,168 @@
+{% extends "admin_taller/index.html" %}
+{% load i18n static %}
+
+{% block cssfiles %}
+   <link rel="stylesheet" type="text/css" href="{% static 'admin_taller/datatables/css/datatables.bundle.css' %}" />
+{% endblock %}
+
+{% block breadcrumb %}
+<div class="kt-grid__item m-2 p-2" id="kt_subheader">
+   <div class="kt-container kt-container--fluid ">
+      <div class="kt-subheader__main">
+         <div class="kt-subheader__breadcrumbs">
+            <a href="{% url 'admin_taller:inicio' %}" class="kt-subheader__breadcrumbs-link">
+               <li class="fas fa-home"></li>
+               {% trans "INICIO" %}
+            </a>
+            <span class="kt-subheader__breadcrumbs-separator"></span>
+            <a href="{% url 'admin_taller:cliente-list' %}" class="kt-subheader__breadcrumbs-link">
+               {% trans "CLIENTE" %}
+            </a>
+            <span class="kt-subheader__breadcrumbs-separator"></span>
+            <a class="kt-subheader__breadcrumbs-link">
+               {% trans "LISTADO" %}
+            </a>
+         </div>
+      </div>
+   </div>
+</div>
+{% endblock %}
+
+{% block contenido %}
+<div class="kt-portlet kt-portlet--mobile">
+   <div class="kt-portlet__head">
+      <div class="kt-portlet__head-label">
+         <h3 class="kt-portlet__head-title">
+            {% trans "Listado de Clientes" %}
+         </h3>
+      </div>
+      <div class="kt-portlet__head-toolbar">
+         <a href="{% url 'admin_taller:cliente-create' %}" class="btn btn-brand">
+            <i class="fas fa-plus mr-3"></i>
+            {% trans "Agregar" %}
+         </a>
+      </div>
+   </div>
+   <div class="kt-portlet__body">
+      <table id="table-list" class="table table-striped- table-hover responsive no-wrap"></table>
+   </div>
+</div>
+{% endblock %}
+
+{% block jsfiles %}
+<script type="text/javascript" src="{% static 'admin_taller/datatables/js/datatables.bundle.js' %}"></script>
+<script type="text/javascript" src="{% static 'admin_taller/js/sweet-alert.min.js' %}"></script>
+
+<script>
+   $(".menu_servicio").addClass("active");
+   
+   $(document).ready(function () {
+      {%if messages %}
+         {%for message in messages %}
+            toastr.success("{{ message }}", "{% trans 'Mensaje' %}");
+         {% endfor %}
+      {% endif %}
+   });
+
+   var table_list = $("#table-list").DataTable({
+      "select": true,
+      "language": {
+         "url": idioma
+      },
+      "responsive": true,
+      "bFilter": true,
+      "oSearch": {
+         "sSearch": "{{word_search}}"
+      },
+      "processing": true,
+      "serverSide": true,
+      "deferRender": true,
+      "order": [
+         [1, "asc"]
+      ],
+      "ajax": {
+         "url": "{% url 'admin_taller:cliente-list' %}",
+         "type": "post",
+         "data": function (d) {
+            d.csrfmiddlewaretoken = "{{csrf_token}}";
+         },
+         "dataSrc": "data"
+      },
+      "columns": [
+         {
+            "data": null,
+            "title": "{% trans 'Opciones' %}",
+            "orderable": false,
+            "orderable": false,
+            "searchable": false,
+            "render": function (data) {
+               return '<div class="btn-toolbar justify-content-center" role="toolbar" aria-label="Toolbar">' +
+                  '<div class="btn-group mr-2" role="group" aria-label="Buttons">' +
+                  '<button onclick="javascript:registro_update(' + data.pk +
+                  ');" class="btn btn-sm btn-secondary btn-icon btn-icon-md" title="{% trans "Editar" %}"><i class="fas fa-edit"></i></button>' +
+                  '<button onclick="javascript:registro_delete(' + data.pk +
+                  ');" class="btn btn-sm btn-secondary btn-icon btn-icon-md" title="{% trans "Eliminar" %}"><i class="fas fa-trash"></i></button>' +
+                  '</div>' +
+                  '</div>';
+            },
+            "class": "text-center",
+         },
+         {
+            "data": "fields.nombre",
+            "title": "{% trans 'Nombre' %}",
+            "orderable": true,
+            "searchable": true,
+         },
+         {
+            "data": "fields.apellido",
+            "title": "{% trans 'Apellido' %}",
+            "orderable": true,
+            "searchable": true,
+         },
+         {
+            "data": "fields.telefono",
+            "title": "{% trans 'Teléfono' %}",
+            "orderable": true,
+            "searchable": true,
+         },
+         {
+            "data": "fields.rfc",
+            "title": "{% trans 'RFC' %}",
+            "orderable": true,
+            "searchable": true
+         }
+      ],
+   });
+
+   function registro_delete(id) {
+      swal({
+         title: "{% trans '¿Está seguro de borrar el registro?' %}",
+         text: "{% trans '¡Una vez eliminado no se podrá recuperar!' %}",
+         icon: "warning",
+         buttons: ["{% trans 'No' %}", "{% trans 'Sí' %}"],
+         dangerMode: true,
+      })
+      .then((eliminar) => {
+         if (eliminar) {
+            $.ajax({
+            method: "post",
+            url: "/cliente/" + id + "/delete/",
+            data: {
+               csrfmiddlewaretoken: "{{csrf_token}}"
+            },
+            }).done(function (msg) {
+               toastr.success(msg.message, "{% trans 'Mensaje' %}");
+               table_list.row(".selected").remove().draw(false);
+            })
+            .fail(function () {
+               toastr.error("{% trans 'Error eliminando registro.' %}", "{% trans 'Mensaje' %}");
+            })
+         }
+      });
+   }
+
+   function registro_update(id) {
+      location.href = "/cliente/" + id + "/update/";
+   }
+</script>
+{% endblock %}

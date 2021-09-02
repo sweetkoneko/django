@@ -1,0 +1,80 @@
+{% extends "admin_taller/index.html" %}
+{% load i18n static %}
+
+{% block cssfiles %} {% endblock %}
+
+{% block breadcrumb %}
+<div class="kt-subheader__breadcrumbs">
+    
+    <a href="{% url 'accounts:list' %}" class="kt-subheader__breadcrumbs-link kt-subheader__breadcrumbs-link--home">{% trans 'Users' %}</a>
+    <span class="kt-subheader__breadcrumbs-separator"></span>
+        
+    {% if object %}
+        <a href="{% url 'accounts:update' user.profile.id %}" class="kt-subheader__breadcrumbs-link kt-subheader__breadcrumbs-link--home">{% trans "Profile" %}</a>
+        <span class="kt-subheader__breadcrumbs-separator"></span>
+    {% endif %}
+    <a href="" class="kt-subheader__breadcrumbs-link ">{% trans "Restablecer contraseña" %} {{ usuario }}</a>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="kt-portlet kt-portlet--mobile">
+    <div class="kt-portlet__head">
+        <div class="kt-portlet__head-label">
+            <h3 class="kt-portlet__head-title">
+                Restablecer contraseña: {{usuario}}
+            </h3>
+        </div>
+    </div>
+    <form action="{% url 'accounts:fn-cambio-contrasena-admin' %}" method="POST" id="form-change-password">
+        {% csrf_token %}
+
+        <div class="kt-portlet__body">
+            <input type="hidden" name="pk" value="{{pk}}">
+            <div class="row">
+                <div class="col-6">
+                    <label for="">Nueva contraseña:</label>
+                    <input type="password" class="form-control" placeholder="Ingrese una nueva contraseña" name="password" id="password" >
+                </div>
+                <div class="col-6">
+                    <label for="">Confirmar contraseña:</label>
+                    <input type="password" class="form-control" placeholder="Confirme nueva contraseña" name="password2" id="password2" >
+                </div>
+            </div>
+        </div>
+        <div class="kt-portlet__foot text-right">
+            <a class="btn btn-secondary" href="{% url 'accounts:list' %}">
+                {% trans "Regresar" %}
+            </a>
+            <button type="submit" class="btn btn-success">
+                {% trans "Save" %}
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block jsfiles %}
+<script src="{% static 'base/assets/js/base.js' %}" type="text/javascript"></script>
+<script>
+    $( document ).ready(function() {
+        var pass1 = "";
+        var pass2 = "";
+        // $(  ).submit(function( event ) {
+        $("#form-change-password").on('submit', function(e){
+            pass1 = $("#password").val();
+            pass2 = $("#password2").val();
+            var patron = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[ -/:-@\[-`{-~]).{6,64}$");
+
+            if(pass1 != pass2){
+                event.preventDefault();
+                toastr.warning("<b>Asegúrese que las contraseñas sean iguales.</b>", "{% trans 'Las contraseñas no coinciden.' %}");
+            }
+            else if (!patron.test(pass1) ){
+                event.preventDefault();
+                toastr.warning("<b>La contraseña debe tener Mayúsculas, minúsculas, un carácter especial y números.</b>", "{% trans 'Contraseña inválida' %}");
+            }
+        });   
+    });
+</script>
+{% endblock %}
